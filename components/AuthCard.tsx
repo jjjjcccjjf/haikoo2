@@ -21,6 +21,7 @@ import { TypographyP } from "./ui/typography";
 import { UserWithProfile } from "@/types";
 
 import { useFormState, useFormStatus } from "react-dom";
+import { signIn } from "@/lib/actions";
 
 export default function AuthCard({ user }: { user: UserWithProfile | null }) {
   return (
@@ -148,11 +149,7 @@ function UpdateProfileForm({ user }: { user: UserWithProfile }) {
 
 function LoginForm() {
   return (
-    <form
-      className="relative flex flex-col gap-4"
-      action="/auth/sign-in"
-      method="post"
-    >
+    <form className="relative flex flex-col gap-4" action={signIn}>
       <div className="flex gap-4">
         <Button
           variant={"outline"}
@@ -203,14 +200,7 @@ function LoginForm() {
         required
       />
       <div className="flex gap-4">
-        <Button
-          variant={"default"}
-          type="submit"
-          size={"lg"}
-          className="basis-1/2"
-        >
-          Sign In
-        </Button>
+        <SignInButton />
         <Button
           variant={"default"}
           type="submit"
@@ -231,5 +221,22 @@ function LoginForm() {
         Reset your password
       </Button>
     </form>
+  );
+}
+
+export function SignInButton() {
+  const { pending } = useFormStatus();
+  
+  return (
+    <Button
+      variant={"default"}
+      type="submit"
+      size={"lg"}
+      className="basis-1/2"
+      aria-disabled={pending}
+      disabled={pending}
+    >
+      Sign In
+    </Button>
   );
 }
