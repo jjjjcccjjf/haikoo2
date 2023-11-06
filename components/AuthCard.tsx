@@ -21,7 +21,7 @@ import { TypographyP } from "./ui/typography";
 import { UserWithProfile } from "@/types";
 
 import { useFormState, useFormStatus } from "react-dom";
-import { signIn } from "@/lib/actions";
+import { signIn, signOut, signUp } from "@/lib/actions";
 
 export default function AuthCard({ user }: { user: UserWithProfile | null }) {
   return (
@@ -82,21 +82,6 @@ function UserCard({ user }: { user: UserWithProfile }) {
   );
 }
 
-function LogoutForm() {
-  return (
-    <form action="/auth/sign-out" method="post" className="">
-      <Button
-        type="submit"
-        className="font-normal text-muted-foreground"
-        variant={"link"}
-        size={"sm"}
-      >
-        Logout
-      </Button>
-    </form>
-  );
-}
-
 function Profile({ user }: { user: UserWithProfile }) {
   return (
     <div className="flex flex-col">
@@ -148,8 +133,10 @@ function UpdateProfileForm({ user }: { user: UserWithProfile }) {
 }
 
 function LoginForm() {
+  const [state, formAction] = useFormState(signUp, null);
+
   return (
-    <form className="relative flex flex-col gap-4" action={signIn}>
+    <form className="relative flex flex-col gap-4" action={formAction}>
       <div className="flex gap-4">
         <Button
           variant={"outline"}
@@ -200,16 +187,11 @@ function LoginForm() {
         required
       />
       <div className="flex gap-4">
+        {state && state.message}
+      </div>
+      <div className="flex gap-4">
         <SignInButton />
-        <Button
-          variant={"default"}
-          type="submit"
-          size={"lg"}
-          formAction="/auth/sign-up"
-          className="basis-1/2"
-        >
-          Sign Up
-        </Button>
+        <SignUpButton />
       </div>
 
       <Button
@@ -224,9 +206,9 @@ function LoginForm() {
   );
 }
 
-export function SignInButton() {
+function SignUpButton() {
   const { pending } = useFormStatus();
-  
+
   return (
     <Button
       variant={"default"}
@@ -235,8 +217,43 @@ export function SignInButton() {
       className="basis-1/2"
       aria-disabled={pending}
       disabled={pending}
+    //   formAction={formAction}
+    >
+      Sign Up
+    </Button>
+  );
+}
+
+function SignInButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button
+      variant={"default"}
+      type="submit"
+      size={"lg"}
+      className="basis-1/2"
+      aria-disabled={pending}
+      disabled={pending}
+      formAction={signIn}
     >
       Sign In
     </Button>
+  );
+}
+
+// REDO this part to support useFormStatus
+function LogoutForm() {
+  return (
+    <form action={signOut} className="">
+      <Button
+        type="submit"
+        className="font-normal text-muted-foreground"
+        variant={"link"}
+        size={"sm"}
+      >
+        Logout
+      </Button>
+    </form>
   );
 }
