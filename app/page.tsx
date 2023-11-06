@@ -5,6 +5,7 @@ import AuthCard from "@/components/AuthCard";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { UserWithProfile } from "@/types";
+import CreateHaikuCard from "@/components/CreateHaikuCard";
 
 // export const revalidate = 0;
 
@@ -15,14 +16,22 @@ export default async function Home() {
 
   const {
     data: { session },
-    error,
+    error: sessionError,
   } = await supabase.auth.getSession();
-
   const user = session?.user;
+
+  const { data, error } = await supabase
+    .from("haikus")
+    .select(
+      `*,
+      hashtags(*),
+      profile: profiles(*)`
+    )
+    .order("id", { ascending: false });
 
   return (
     <>
-      {/* <pre>{JSON.stringify(user as UserWithProfile)}</pre> */}
+      <pre>{JSON.stringify(data)}</pre>
       <section className="container flex border-b border-secondary md:p-8 md:pb-4 p-4">
         <div className="hidden min-h-full w-1/4 p-4 md:block">
           <TopHashtags />
@@ -35,7 +44,7 @@ export default async function Home() {
             <button className="grow divide-x">For you</button>
             <button className="grow divide-x">Recent</button>
           </div>
-          {/* <CreateHaikuCard user={userWithProfile} /> */}
+          <CreateHaikuCard user={user as UserWithProfile} />
         </div>
         <div className="hidden min-h-full w-1/4 p-4 md:block">
           <AuthCard user={user as UserWithProfile}></AuthCard>

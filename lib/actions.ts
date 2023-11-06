@@ -1,5 +1,6 @@
 "use server";
 
+import { genericFormState } from "@/types";
 import { createServerActionClient } from "@supabase/auth-helpers-nextjs";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
@@ -58,3 +59,60 @@ export async function signOut() {
 
   revalidatePath("/");
 }
+
+export const postHaiku = async (_: genericFormState, formData: FormData) => {
+  try {
+    const body = String(formData.get("body"));
+    const hashtags = String(formData.get("hashtags"));
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    const user = session?.user;
+
+    // Insert into the 'haikus' table
+    const haikusInsert = await supabase
+      .from("haikus")
+      .insert([
+        {
+          author_id: user?.id,
+          body,
+        },
+      ])
+      .select()
+      .single();
+
+    if (haikusInsert.error) {
+      throw haikusInsert.error.message;
+    }
+
+    // Extract hashtags from the 'hashtags' field and split them
+    const hashtagArray = hashtags.split(" ");
+
+    // Loop through the hashtags and insert them into the 'hashtags' table
+    for (const hashtag of hashtagArray) {
+      if (hashtag) {
+        const hashtagsInsert = await supabase
+          .from("hashtags")
+          .upsert([
+            {
+              haiku_id: haikusInsert.data.id,
+              hashtag: hashtag,
+            },
+          ])
+          .select()
+          .single();
+
+        if (hashtagsInsert.error) {
+          throw hashtagsInsert.error.message;
+        }
+      }
+    }
+
+    revalidatePath("/");
+    return { status: true, message: "" };
+  } catch (error) {
+    return { status: false, message: error as string };
+  }
+};

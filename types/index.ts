@@ -17,3 +17,8 @@ export interface HaikuWithDetails extends Haiku {
 export interface HaikuWithHashtags extends Haiku {
   hashtags: Hashtag[];
 }
+
+export type genericFormState = {
+  status: null | boolean,
+  message: null | string
+}
