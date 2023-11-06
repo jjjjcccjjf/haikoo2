@@ -1,10 +1,24 @@
 import Image from "next/image";
 import logo from "@/app/logo.png";
 import TopHashtags from "@/components/TopHashtags";
+import AuthCard from "@/components/AuthCard";
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
+import { UserWithProfile } from "@/types";
 
-export default function Home() {
+export default async function Home() {
+  const supabase = createServerComponentClient({ cookies });
+
+  const {
+    data: { session },
+    error,
+  } = await supabase.auth.getSession();
+
+  const user = session?.user;
+
   return (
     <>
+      {/* <pre>{JSON.stringify(user as UserWithProfile)}</pre> */}
       <section className="container flex border-b border-secondary md:p-8 md:pb-4 p-4">
         <div className="hidden min-h-full w-1/4 p-4 md:block">
           <TopHashtags />
@@ -20,7 +34,7 @@ export default function Home() {
           {/* <CreateHaikuCard user={userWithProfile} /> */}
         </div>
         <div className="hidden min-h-full w-1/4 p-4 md:block">
-          {/* <AuthCard user={userWithProfile}></AuthCard> */}
+          <AuthCard user={user as UserWithProfile}></AuthCard>
         </div>
       </section>
       {/* <HaikuCardsSection serverHaikus={data ?? []} /> */}
