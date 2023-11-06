@@ -20,6 +20,8 @@ import { TypographyP } from "./ui/typography";
 // import supabase from "@/utils/supabase";
 import { UserWithProfile } from "@/types";
 
+import { useFormState, useFormStatus } from "react-dom";
+
 export default function AuthCard({ user }: { user: UserWithProfile | null }) {
   return (
     <Card>
