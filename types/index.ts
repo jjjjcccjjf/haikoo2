@@ -18,7 +18,7 @@ export interface HaikuWithHashtags extends Haiku {
   hashtags: Hashtag[];
 }
 
-export type genericFormState = {
+export type GenericResponseType = {
   status: null | boolean,
   message: null | string
 }

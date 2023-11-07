@@ -1,6 +1,6 @@
 "use server";
 
-import { genericFormState } from "@/types";
+import { GenericResponseType } from "@/types";
 import { createServerActionClient } from "@supabase/auth-helpers-nextjs";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
@@ -60,7 +60,7 @@ export async function signOut() {
   revalidatePath("/");
 }
 
-export const postHaiku = async (_: genericFormState, formData: FormData) => {
+export const postHaiku = async (_: GenericResponseType, formData: FormData) => {
   try {
     const body = String(formData.get("body"));
     const hashtags = String(formData.get("hashtags"));

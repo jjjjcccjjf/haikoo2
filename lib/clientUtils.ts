@@ -1,11 +1,7 @@
+import { GenericResponseType } from "@/types";
 import { syllable } from "syllable";
 
-export interface IsHaikuResponse {
-  status: boolean;
-  message: string;
-}
-
-export function isHaiku(text: string): IsHaikuResponse {
+export function isHaiku(text: string): GenericResponseType {
   const data = {
     status: false,
     message: "",

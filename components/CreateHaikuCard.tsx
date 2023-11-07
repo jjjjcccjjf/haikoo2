@@ -1,18 +1,14 @@
 "use client";
 
-// import { isHaiku } from "@/utils";
-// import { postHaiku } from "@/lib/actions";
+import { Textarea } from "@/components/ui/textarea";
+import { postHaiku } from "@/lib/actions";
+import { GenericResponseType } from "@/types";
 import { User } from "@supabase/supabase-js";
 import React, { startTransition, useReducer, useRef, useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormState } from "react-dom";
 import { BsPatchQuestion } from "react-icons/bs";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { revalidatePath } from "next/cache";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { postHaiku } from "@/lib/actions";
-import { genericFormState } from "@/types";
 
 type Action =
   | { type: "UPDATE_FIELD"; field: string; value: string }
@@ -42,18 +38,18 @@ export default function CreateHaikuCard({ user }: { user: User | null }) {
 
   const [formData, dispatch] = useReducer(reducer, initialState);
   const formRef = useRef<HTMLFormElement>(null);
-  const [pending, setPending] = useState(false)
+  const [pending, setPending] = useState(false);
   const [state, formAction] = useFormState(
     postHaiku,
-    initialFormState as genericFormState
+    initialFormState as GenericResponseType
   );
 
   const updateErrorMessage = (
     element: HTMLFormElement,
-    errorMessage: string
+    errorMessage: string | null
   ) => {
     // Set the 'data-after' attribute to the new error message
-    element.dataset.after = errorMessage;
+    element.dataset.after = errorMessage ?? "";
   };
 
   const handleFieldChange = (field: string, value: string) => {
@@ -66,7 +62,7 @@ export default function CreateHaikuCard({ user }: { user: User | null }) {
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setPending(true)
+    setPending(true);
     const formData = new FormData(event.currentTarget);
 
     const body = String(formData.get("body"));
@@ -77,6 +73,7 @@ export default function CreateHaikuCard({ user }: { user: User | null }) {
     if (res.status === false) {
       if (formRef.current) {
         updateErrorMessage(formRef.current, res.message);
+        setPending(false);
       }
     } else {
       if (formRef.current) {
@@ -86,7 +83,7 @@ export default function CreateHaikuCard({ user }: { user: User | null }) {
         startTransition(() => {
           // programmatically invoke the server action here
           formAction(formData);
-          setPending(false)
+          setPending(false);
         });
       }
     }
