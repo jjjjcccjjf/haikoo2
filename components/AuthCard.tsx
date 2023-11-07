@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Image from "next/image";
-import { useReducer, useState } from "react";
+import { DispatchWithoutAction, useEffect, useReducer, useState } from "react";
 import { FaFacebookSquare, FaGoogle } from "react-icons/fa";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -18,10 +18,10 @@ import { Textarea } from "./ui/textarea";
 import { TypographyP } from "./ui/typography";
 // import { updateProfile } from "@/utils/actions";
 // import supabase from "@/utils/supabase";
-import { UserWithProfile } from "@/types";
+import { GenericResponseType, UserWithProfile } from "@/types";
 
 import { useFormState, useFormStatus } from "react-dom";
-import { signIn, signOut, signUp } from "@/lib/actions";
+import { signIn, signOut, signUp, updateProfile } from "@/lib/actions";
 
 export default function AuthCard({ user }: { user: UserWithProfile | null }) {
   return (
@@ -73,7 +73,7 @@ function UserCard({ user }: { user: UserWithProfile }) {
       </div>
       <div className="mt-14 flex items-center justify-between">
         {isEditMode ? (
-          <UpdateProfileForm user={user} />
+          <UpdateProfileForm user={user} toggleEditMode={toggleEditMode} />
         ) : (
           <Profile user={user} />
         )}
@@ -82,28 +82,30 @@ function UserCard({ user }: { user: UserWithProfile }) {
   );
 }
 
-function Profile({ user }: { user: UserWithProfile }) {
-  return (
-    <div className="flex flex-col">
-      <TypographyP className="font-bold">@{user.profile?.username}</TypographyP>
-      <TypographyP>
-        {user.profile?.status ?? (
-          <span className="text-sm italic text-muted-foreground">
-            No status yet
-          </span>
-        )}
-      </TypographyP>
-    </div>
-  );
-}
-
 // TODO: Fix this server action
-function UpdateProfileForm({ user }: { user: UserWithProfile }) {
+function UpdateProfileForm({
+  user,
+  toggleEditMode,
+}: {
+  user: UserWithProfile;
+  toggleEditMode: DispatchWithoutAction;
+}) {
+  const [state, formAction] = useFormState(updateProfile, {
+    status: null,
+    message: null,
+  } as GenericResponseType);
   const [username, setUsername] = useState(user.profile?.username ?? "");
   const [status, setStatus] = useState(user.profile?.status ?? "");
+
+  useEffect(() => {
+    if (state.status) {
+      toggleEditMode();
+    }
+  }, [state, toggleEditMode]);
+
   return (
-    <form className="flex w-full flex-col">
-      {/* <form className="flex w-full flex-col" action={updateProfile}> */}
+    // <form className="flex w-full flex-col">
+    <form className="flex w-full flex-col" action={formAction}>
       <div className="relative">
         <Input
           type="text"
@@ -125,10 +127,38 @@ function UpdateProfileForm({ user }: { user: UserWithProfile }) {
         onChange={(e) => setStatus(e.target.value)}
         name="status"
       />
-      <Button className="mt-6" size={"lg"} type="submit">
-        Save Changes
-      </Button>
+      <UpdateProfileSubmit />
     </form>
+  );
+}
+
+function UpdateProfileSubmit() {
+  const { pending } = useFormStatus();
+  return (
+    <Button
+      className="mt-6"
+      size={"lg"}
+      type="submit"
+      aria-disabled={pending}
+      disabled={pending}
+    >
+      Save Changes
+    </Button>
+  );
+}
+
+function Profile({ user }: { user: UserWithProfile }) {
+  return (
+    <div className="flex flex-col">
+      <TypographyP className="font-bold">@{user.profile?.username}</TypographyP>
+      <TypographyP>
+        {user.profile?.status ?? (
+          <span className="text-sm italic text-muted-foreground">
+            No status yet
+          </span>
+        )}
+      </TypographyP>
+    </div>
   );
 }
 
@@ -186,9 +216,7 @@ function LoginForm() {
         id="auth_password"
         required
       />
-      <div className="flex gap-4">
-        {state && state.message}
-      </div>
+      <div className="flex gap-4">{state && state.message}</div>
       <div className="flex gap-4">
         <SignInButton />
         <SignUpButton />
@@ -217,7 +245,7 @@ function SignUpButton() {
       className="basis-1/2"
       aria-disabled={pending}
       disabled={pending}
-    //   formAction={formAction}
+      //   formAction={formAction}
     >
       Sign Up
     </Button>

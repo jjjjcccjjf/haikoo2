@@ -116,3 +116,40 @@ export const postHaiku = async (_: GenericResponseType, formData: FormData) => {
     return { status: false, message: error as string };
   }
 };
+
+export const updateProfile = async (_: any, formData: FormData) => {
+  try {
+    const username = String(formData.get("username"));
+    const status = String(formData.get("status"));
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    const user = session?.user;
+
+    if (!user) {
+      throw "User not found in session";
+    }
+
+    const { data, error } = await supabase
+      .from("profiles")
+      .update({ username, status })
+      .eq("id", user?.id);
+
+    if (error) {
+      throw error.message;
+    }
+
+    revalidatePath("/")
+    return {
+      status: true,
+      message: "OK",
+    };
+  } catch (error) {
+    return {
+      status: false,
+      message: error as string,
+    };
+  }
+};

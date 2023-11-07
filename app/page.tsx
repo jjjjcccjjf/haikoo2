@@ -14,12 +14,25 @@ import RealtimeHaikuCardsSection from "@/components/RealtimeHaikuCardSection";
 
 export default async function Home() {
   const supabase = createServerComponentClient({ cookies });
+  let userWithProfile = null;
 
   const {
     data: { session },
     error: sessionError,
   } = await supabase.auth.getSession();
   const user = session?.user;
+
+  if (user) {
+    userWithProfile = await supabase
+      .from("profiles")
+      .select()
+      .eq("id", user.id)
+      .single();
+    userWithProfile = {
+      ...user,
+      profile: userWithProfile.data,
+    } as UserWithProfile;
+  }
 
   const { data, error } = await supabase
     .from("haikus")
@@ -32,7 +45,7 @@ export default async function Home() {
 
   return (
     <>
-      <pre>{JSON.stringify(data)}</pre>
+      {/* <pre>{JSON.stringify(data)}</pre> */}
       <section className="container flex border-b border-secondary md:p-8 md:pb-4 p-4">
         <div className="hidden min-h-full w-1/4 p-4 md:block">
           <TopHashtags />
@@ -48,10 +61,10 @@ export default async function Home() {
           <CreateHaikuCard user={user as UserWithProfile} />
         </div>
         <div className="hidden min-h-full w-1/4 p-4 md:block">
-          <AuthCard user={user as UserWithProfile}></AuthCard>
+          <AuthCard user={userWithProfile as UserWithProfile}></AuthCard>
         </div>
       </section>
-      <RealtimeHaikuCardsSection serverHaikus={data ?? []} />
+      {/* <RealtimeHaikuCardsSection serverHaikus={data ?? []} /> */}
     </>
   );
 }
