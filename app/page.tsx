@@ -1,15 +1,14 @@
-import Image from "next/image";
 import logo from "@/app/logo.png";
-import TopHashtags from "@/components/TopHashtags";
 import AuthCard from "@/components/AuthCard";
+import CreateHaikuCard from "@/components/CreateHaikuCard";
+import ServerHaikuCardSection from "@/components/ServerHaikuCardSection";
+import TopHashtags from "@/components/TopHashtags";
+import { UserWithProfile } from "@/types";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
-import { UserWithProfile } from "@/types";
-import CreateHaikuCard from "@/components/CreateHaikuCard";
-import RealtimeHaikuCardsSection from "@/components/RealtimeHaikuCardSection";
+import Image from "next/image";
 
 // export const revalidate = 0;
-
 // export const dynamic = "force-dynamic";
 
 export default async function Home() {
@@ -34,15 +33,6 @@ export default async function Home() {
     } as UserWithProfile;
   }
 
-  const { data, error } = await supabase
-    .from("haikus")
-    .select(
-      `*,
-      hashtags(*),
-      profile: profiles(*)`
-    )
-    .order("id", { ascending: false });
-
   return (
     <>
       {/* <pre>{JSON.stringify(data)}</pre> */}
@@ -64,7 +54,7 @@ export default async function Home() {
           <AuthCard user={userWithProfile as UserWithProfile}></AuthCard>
         </div>
       </section>
-      {/* <RealtimeHaikuCardsSection serverHaikus={data ?? []} /> */}
+      <ServerHaikuCardSection />
     </>
   );
 }

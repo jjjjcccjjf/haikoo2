@@ -22,3 +22,9 @@ export type GenericResponseType = {
   status: null | boolean,
   message: null | string
 }
+
+export interface HaikuWithDetailsList {
+  list1: HaikuWithDetails[];
+  list2: HaikuWithDetails[];
+  list3: HaikuWithDetails[];
+}
