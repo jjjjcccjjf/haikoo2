@@ -37,12 +37,12 @@ export default function CreateHaikuCard({ user }: { user: User | null }) {
   };
 
   const [formData, dispatch] = useReducer(reducer, initialState);
-  const formRef = useRef<HTMLFormElement>(null);
   const [pending, setPending] = useState(false);
   const [state, formAction] = useFormState(
     postHaiku,
     initialFormState as GenericResponseType
   );
+  const formRef = useRef<HTMLFormElement>(null);
 
   const updateErrorMessage = (
     element: HTMLFormElement,
@@ -114,14 +114,6 @@ export default function CreateHaikuCard({ user }: { user: User | null }) {
             name="hashtags"
             value={formData.hashtags}
             onChange={(e) => {
-              //   const regex = /^#(?:\w+)(?:\s*#(?:\w+))*$/;
-
-              //   if (regex.test(e.target.value)) {
-              //     console.log("Valid input");
-              //   } else {
-              //     console.log("Invalid input");
-              //   }
-
               handleFieldChange("hashtags", e.target.value);
             }}
             className=" w-full bg-transparent px-5 py-2 xl:w-1/2"

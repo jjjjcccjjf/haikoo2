@@ -6,6 +6,7 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { UserWithProfile } from "@/types";
 import CreateHaikuCard from "@/components/CreateHaikuCard";
+import RealtimeHaikuCardsSection from "@/components/RealtimeHaikuCardSection";
 
 // export const revalidate = 0;
 
@@ -50,7 +51,7 @@ export default async function Home() {
           <AuthCard user={user as UserWithProfile}></AuthCard>
         </div>
       </section>
-      {/* <HaikuCardsSection serverHaikus={data ?? []} /> */}
+      <RealtimeHaikuCardsSection serverHaikus={data ?? []} />
     </>
   );
 }
