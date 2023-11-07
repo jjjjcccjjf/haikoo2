@@ -35,7 +35,7 @@ export default async function Home() {
 
   return (
     <>
-      <pre>{JSON.stringify(user)}</pre>
+      {/* <pre>{JSON.stringify(user)}</pre> */}
       <section className="container flex border-b border-secondary md:p-8 md:pb-4 p-4">
         <div className="hidden min-h-full w-1/4 p-4 md:block">
           <TopHashtags />
@@ -48,10 +48,10 @@ export default async function Home() {
             <button className="grow divide-x">For you</button>
             <button className="grow divide-x">Recent</button>
           </div>
-          <CreateHaikuCard user={user as UserWithProfile} />
+          <CreateHaikuCard user={userWithProfile} />
         </div>
         <div className="hidden min-h-full w-1/4 p-4 md:block">
-          <AuthCard user={userWithProfile as UserWithProfile}></AuthCard>
+          <AuthCard user={userWithProfile}></AuthCard>
         </div>
       </section>
       <ServerHaikuCardSection />

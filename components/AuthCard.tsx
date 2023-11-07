@@ -193,6 +193,8 @@ function LoginForm() {
           size={"lg"}
           type="button"
           className="basis-1/2"
+          aria-disabled={true}
+          disabled={true}
         >
           <FaFacebookSquare size={20}></FaFacebookSquare>
         </Button>
