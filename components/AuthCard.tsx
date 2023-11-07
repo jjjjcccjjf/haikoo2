@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { GenericResponseType, UserWithProfile } from "@/types";
 import Image from "next/image";
 import { DispatchWithoutAction, useEffect, useReducer, useState } from "react";
 import { FaFacebookSquare, FaGoogle } from "react-icons/fa";
@@ -16,12 +17,10 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { TypographyP } from "./ui/typography";
-// import { updateProfile } from "@/utils/actions";
-// import supabase from "@/utils/supabase";
-import { GenericResponseType, UserWithProfile } from "@/types";
 
-import { useFormState, useFormStatus } from "react-dom";
 import { signIn, signOut, signUp, updateProfile } from "@/lib/actions";
+import { useFormState, useFormStatus } from "react-dom";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default function AuthCard({ user }: { user: UserWithProfile | null }) {
   return (
@@ -173,6 +172,19 @@ function LoginForm() {
           size={"lg"}
           type="button"
           className="basis-1/2"
+          onClick={async () => {
+            const supabase = createClientComponentClient();
+            const { data, error } = await supabase.auth.signInWithOAuth({
+              provider: "google",
+              options: {
+                queryParams: {
+                  access_type: "offline",
+                  prompt: "consent",
+                },
+                redirectTo: `http://localhost:3000/auth/callback`,
+              },
+            });
+          }}
         >
           <FaGoogle size={20}></FaGoogle>
         </Button>

@@ -35,7 +35,7 @@ export default async function Home() {
 
   return (
     <>
-      {/* <pre>{JSON.stringify(data)}</pre> */}
+      <pre>{JSON.stringify(user)}</pre>
       <section className="container flex border-b border-secondary md:p-8 md:pb-4 p-4">
         <div className="hidden min-h-full w-1/4 p-4 md:block">
           <TopHashtags />
