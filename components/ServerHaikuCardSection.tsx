@@ -43,12 +43,12 @@ export default async function ServerHaikuCardSection() {
               return <HaikuCard contents={item} key={item.id} />;
             })}
           </ul>
-          <ul className="hidden space-y-8 divide-y divide-accent sm:block md:divide-none">
+          <ul className="space-y-8 divide-y divide-accent sm:block md:divide-none">
             {haikuLists.list2.map((item) => {
               return <HaikuCard contents={item} key={item.id} />;
             })}
           </ul>
-          <ul className="hidden space-y-8 divide-y divide-accent md:divide-none lg:block">
+          <ul className="space-y-8 divide-y divide-accent md:divide-none lg:block">
             {haikuLists.list3.map((item) => {
               return <HaikuCard contents={item} key={item.id} />;
             })}
