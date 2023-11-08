@@ -190,3 +190,29 @@ export const updateProfile = async (_: any, formData: FormData) => {
     };
   }
 };
+
+export async function resetPassword(formData: FormData) {
+  const email = String(formData.get("email"));
+
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: "http://localhost:3000/auth/callback?next=http://localhost:3000/auth/forgot-password",
+    });
+
+    console.log(error);
+
+    if (error) {
+      throw error.message;
+    }
+
+    return {
+      message: "OK",
+      status: true,
+    };
+  } catch (error) {
+    return {
+      message: error,
+      status: false,
+    };
+  }
+}

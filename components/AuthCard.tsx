@@ -2,6 +2,13 @@
 
 import anonymouse from "@/app/anonymouse.png";
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
+import {
   Card,
   CardContent,
   CardDescription,
@@ -13,16 +20,22 @@ import { GenericResponseType, UserWithProfile } from "@/types";
 import Image from "next/image";
 import { DispatchWithoutAction, useEffect, useReducer, useState } from "react";
 import { FaFacebookSquare, FaGoogle } from "react-icons/fa";
+import { BiMailSend } from "react-icons/bi";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { TypographyP } from "./ui/typography";
 
-import { signIn, signOut, signUp, updateProfile } from "@/lib/actions";
+import {
+  resetPassword,
+  signIn,
+  signOut,
+  signUp,
+  updateProfile,
+} from "@/lib/actions";
 import { useFormState, useFormStatus } from "react-dom";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Label } from "./ui/label";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 export default function AuthCard({ user }: { user: UserWithProfile | null }) {
   return (
@@ -194,93 +207,107 @@ function LoginForm() {
   const [state, formAction] = useFormState(signUp, null);
 
   return (
-    <form className="relative flex flex-col gap-4" action={formAction}>
-      <div className="flex gap-4">
-        <Button
-          variant={"outline"}
-          size={"lg"}
-          type="button"
-          className="basis-1/2"
-          onClick={async () => {
-            const supabase = createClientComponentClient();
-            const { data, error } = await supabase.auth.signInWithOAuth({
-              provider: "google",
-              options: {
-                queryParams: {
-                  access_type: "offline",
-                  prompt: "consent",
+    <>
+      <form className="relative flex flex-col gap-4" action={formAction}>
+        <div className="flex gap-4">
+          <Button
+            variant={"outline"}
+            size={"lg"}
+            type="button"
+            className="basis-1/2"
+            onClick={async () => {
+              const supabase = createClientComponentClient();
+              const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: "google",
+                options: {
+                  queryParams: {
+                    access_type: "offline",
+                    prompt: "consent",
+                  },
+                  redirectTo: `http://localhost:3000/auth/callback`,
                 },
-                redirectTo: `http://localhost:3000/auth/callback`,
-              },
-            });
-          }}
-        >
-          <FaGoogle size={20}></FaGoogle>
-        </Button>
-        <Button
-          variant={"outline"}
-          size={"lg"}
-          type="button"
-          className="basis-1/2"
-          onClick={async () => {
-            const supabase = createClientComponentClient();
-            const { data, error } = await supabase.auth.signInWithOAuth({
-              provider: "facebook",
-              options: {
-                redirectTo: `http://localhost:3000/auth/callback`,
-              },
-            });
-          }}
-        >
-          <FaFacebookSquare size={20}></FaFacebookSquare>
-        </Button>
-      </div>
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t"></span>
+              });
+            }}
+          >
+            <FaGoogle size={20}></FaGoogle>
+          </Button>
+          <Button
+            variant={"outline"}
+            size={"lg"}
+            type="button"
+            className="basis-1/2"
+            onClick={async () => {
+              const supabase = createClientComponentClient();
+              const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: "facebook",
+                options: {
+                  redirectTo: `http://localhost:3000/auth/callback`,
+                },
+              });
+            }}
+          >
+            <FaFacebookSquare size={20}></FaFacebookSquare>
+          </Button>
         </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t"></span>
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">
+              Or continue with
+            </span>
+          </div>
         </div>
-      </div>
-      <label htmlFor="auth_email" className="sr-only">
-        Email
-      </label>
-      <Input
-        type="text"
-        name="email"
-        id="auth_email"
-        placeholder="you@example.com"
-        required
-      />
-      <label htmlFor="auth_password" className="sr-only">
-        Password
-      </label>
+        <label htmlFor="auth_email" className="sr-only">
+          Email
+        </label>
+        <Input
+          type="text"
+          name="email"
+          id="auth_email"
+          placeholder="you@example.com"
+          required
+        />
+        <label htmlFor="auth_password" className="sr-only">
+          Password
+        </label>
 
-      <Input
-        type="password"
-        name="password"
-        placeholder="••••••••"
-        id="auth_password"
-        required
-      />
-      <div className="flex gap-4">{state && state.message}</div>
-      <div className="flex gap-4">
-        <SignInButton />
-        <SignUpButton />
-      </div>
-
-      <Button
-        variant={"link"}
-        size={"lg"}
-        type="button"
-        className="font-normal text-muted-foreground"
-      >
-        Reset your password
-      </Button>
-    </form>
+        <Input
+          type="password"
+          name="password"
+          placeholder="••••••••"
+          id="auth_password"
+          required
+        />
+        <div className="flex gap-4">{state && state.message}</div>
+        <div className="flex gap-4">
+          <SignInButton />
+          <SignUpButton />
+        </div>
+      </form>
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="item-1" className="border-none">
+          <AccordionTrigger className="justify-center items-center text-sm font-normal text-muted-foreground">
+            Reset your password
+          </AccordionTrigger>
+          <AccordionContent className="p-1">
+            <form action={resetPassword} className="flex gap-2">
+              <Label htmlFor="email" className="sr-only">
+                Your email
+              </Label>
+              <Input
+                id="email"
+                name="email"
+                placeholder="example@email.com"
+                type="email"
+              />
+              <Button type="submit">Reset</Button>
+            </form>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    </>
   );
 }
 
