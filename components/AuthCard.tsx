@@ -1,6 +1,6 @@
 "use client";
 
-import endan from "@/app/endan.jpg";
+import anonymouse from "@/app/anonymouse.png";
 import {
   Card,
   CardContent,
@@ -22,6 +22,7 @@ import { signIn, signOut, signUp, updateProfile } from "@/lib/actions";
 import { useFormState, useFormStatus } from "react-dom";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Label } from "./ui/label";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 export default function AuthCard({ user }: { user: UserWithProfile | null }) {
   return (
@@ -54,13 +55,16 @@ function UserCard({ user }: { user: UserWithProfile }) {
       <div>
         <div className="h-20 bg-[url('/plus.svg')]"></div>
         <div className="relative">
-          <Image
-            src={endan}
-            height={80}
-            width={80}
-            alt="..."
-            className=" absolute -top-12 rounded-full border-2 border-orange-50"
-          ></Image>
+          <div className="overflow-hidden  absolute -top-12 rounded-full border-2 border-orange-50 w-20 h-20">
+            <Image
+              src={user.profile.avatar_url ?? anonymouse}
+              // height={80}
+              // width={80}
+              alt="..."
+              fill={true}
+              className=" object-cover"
+            ></Image>
+          </div>
           <Button
             className="absolute right-0 font-normal text-muted-foreground"
             variant={"link"}

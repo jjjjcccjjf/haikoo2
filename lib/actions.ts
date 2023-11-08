@@ -152,7 +152,7 @@ export const updateProfile = async (_: any, formData: FormData) => {
       const { data: uploadedAvatarFile, error: uploadAvatarFileError } =
         await supabase.storage
           .from("user-avatars")
-          .upload(`${user.id}/avatar.png`, avatarFile, {
+          .upload(`${user.id}/${avatarFile.name}`, avatarFile, {
             cacheControl: "3600",
             upsert: true,
           });

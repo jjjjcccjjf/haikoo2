@@ -16,13 +16,16 @@ export default function HaikuCard({
     <li className=" text-sm leading-6 ">
       <figure className="dark:highlight-white/5 relative flex flex-col rounded-lg bg-card p-6 text-card-foreground shadow-sm border">
         <figcaption className="flex items-center space-x-4">
-          <Image
-            src={anonymouse}
-            alt=""
-            className="h-14 w-14 flex-none rounded-full object-cover"
-            loading="lazy"
-            decoding="async"
-          />
+          <div className="h-14 w-14 flex-none rounded-full relative overflow-hidden">
+            <Image
+              src={contents?.profile?.avatar_url ?? anonymouse}
+              alt=""
+              fill={true}
+              className="object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
           <div className="max-w-[175px] flex-auto lg:max-w-[150px] xl:max-w-[275px]">
             <p className="text-base font-semibold text-card-foreground">
               {contents.profile?.username
