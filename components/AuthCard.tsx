@@ -222,8 +222,15 @@ function LoginForm() {
           size={"lg"}
           type="button"
           className="basis-1/2"
-          aria-disabled={true}
-          disabled={true}
+          onClick={async () => {
+            const supabase = createClientComponentClient();
+            const { data, error } = await supabase.auth.signInWithOAuth({
+              provider: "facebook",
+              options: {
+                redirectTo: `http://localhost:3000/auth/callback`,
+              },
+            });
+          }}
         >
           <FaFacebookSquare size={20}></FaFacebookSquare>
         </Button>
