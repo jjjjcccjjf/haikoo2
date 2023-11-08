@@ -32,7 +32,7 @@ export default async function ServerHaikuCardSection() {
   };
 
   return (
-    <section className="NO:max-h-[33rem] container grid grid-cols-1 gap-6 overflow-hidden px-4 py-8 sm:grid-cols-2 md:px-12 md:py-8 lg:grid-cols-3 lg:gap-8">
+    <section className="NO:max-h-[33rem] container grid grid-cols-1 gap-8 overflow-hidden px-4 py-8 sm:grid-cols-2 md:px-12 md:py-8 lg:grid-cols-3">
       {haikuLists.list1.length +
         haikuLists.list2.length +
         haikuLists.list3.length >
@@ -43,12 +43,12 @@ export default async function ServerHaikuCardSection() {
               return <HaikuCard contents={item} key={item.id} />;
             })}
           </ul>
-          <ul className="space-y-8 divide-y divide-accent sm:block md:divide-none">
+          <ul className="space-y-8 ">
             {haikuLists.list2.map((item) => {
               return <HaikuCard contents={item} key={item.id} />;
             })}
           </ul>
-          <ul className="space-y-8 divide-y divide-accent md:divide-none lg:block">
+          <ul className="space-y-8 ">
             {haikuLists.list3.map((item) => {
               return <HaikuCard contents={item} key={item.id} />;
             })}
