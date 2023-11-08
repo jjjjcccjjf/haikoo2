@@ -121,6 +121,13 @@ export const updateProfile = async (_: any, formData: FormData) => {
   try {
     const username = String(formData.get("username"));
     const status = String(formData.get("status"));
+    const avatarFile = formData.get("avatar") as File;
+    // Check if avatarFile.size is less than or equal to 2MB
+    const maxSizeInBytes = 2 * 1024 * 1024; // 2MB in bytes
+    if (avatarFile.size > maxSizeInBytes) {
+      // The file size is within the allowed limit (2MB or less)
+      throw "Avatar cannot exceed 2MB"
+    }
 
     const {
       data: { session },
@@ -132,16 +139,40 @@ export const updateProfile = async (_: any, formData: FormData) => {
       throw "User not found in session";
     }
 
-    const { data, error } = await supabase
+    const { data: updateUserData, error: updateProfileError } = await supabase
       .from("profiles")
       .update({ username, status })
-      .eq("id", user?.id);
+      .eq("id", user.id);
 
-    if (error) {
-      throw error.message;
+    if (updateProfileError) {
+      throw updateProfileError.message;
     }
 
-    revalidatePath("/")
+    if (avatarFile) {
+      const { data: uploadedAvatarFilePath, error: uploadAvatarFileError } =
+        await supabase.storage
+          .from("user-avatars")
+          .upload(`${user.id}/avatar.png`, avatarFile, {
+            cacheControl: "3600",
+            upsert: true,
+          });
+
+      if (uploadAvatarFileError) {
+        throw uploadAvatarFileError.message;
+      }
+
+      const { data: updateAvatarUrl, error: updateAvatarUrlError } =
+        await supabase
+          .from("profiles")
+          .update({ avatar_url: uploadedAvatarFilePath })
+          .eq("id", user.id);
+
+      if (updateAvatarUrlError) {
+        throw updateAvatarUrlError.message;
+      }
+    }
+
+    revalidatePath("/");
     return {
       status: true,
       message: "OK",

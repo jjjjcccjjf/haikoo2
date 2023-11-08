@@ -21,6 +21,7 @@ import { TypographyP } from "./ui/typography";
 import { signIn, signOut, signUp, updateProfile } from "@/lib/actions";
 import { useFormState, useFormStatus } from "react-dom";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { Label } from "./ui/label";
 
 export default function AuthCard({ user }: { user: UserWithProfile | null }) {
   return (
@@ -105,9 +106,26 @@ function UpdateProfileForm({
   return (
     // <form className="flex w-full flex-col">
     <form className="flex w-full flex-col" action={formAction}>
-      <div className="relative">
+      <div className="grid w-full max-w-sm items-center gap-1.5">
+        <Label htmlFor="avatar" className="text-muted-foreground">
+          Update Avatar
+        </Label>
+        <Input
+          id="avatar"
+          type="file"
+          className="file:text-muted-foreground"
+          name="avatar"
+          accept="image/*"
+        />
+      </div>
+      <div className="relative mt-6">
+        <Label htmlFor="username" className="text-muted-foreground">
+          Update Username
+        </Label>
+
         <Input
           type="text"
+          id="username"
           className="max-full bg-transparent pl-7 outline-none"
           name="username"
           required
@@ -115,17 +133,24 @@ function UpdateProfileForm({
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
-        <span className="pointer-events-none absolute left-3 top-2 text-muted-foreground">
+        <span className="pointer-events-none absolute left-3 top-8 text-muted-foreground">
           @
         </span>
       </div>
-      <Textarea
-        className="mt-6 resize-none"
-        placeholder="Edit your status here"
-        value={status}
-        onChange={(e) => setStatus(e.target.value)}
-        name="status"
-      />
+      <div className="mt-6 ">
+        <Label htmlFor="status" className="text-muted-foreground">
+          Update Status
+        </Label>
+
+        <Textarea
+          className="resize-none"
+          placeholder="Edit your status here"
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          name="status"
+          id="status"
+        />
+      </div>
       <UpdateProfileSubmit />
     </form>
   );
