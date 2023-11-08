@@ -126,7 +126,7 @@ export const updateProfile = async (_: any, formData: FormData) => {
     const maxSizeInBytes = 2 * 1024 * 1024; // 2MB in bytes
     if (avatarFile.size > maxSizeInBytes) {
       // The file size is within the allowed limit (2MB or less)
-      throw "Avatar cannot exceed 2MB"
+      throw "Avatar cannot exceed 2MB";
     }
 
     const {
@@ -149,7 +149,7 @@ export const updateProfile = async (_: any, formData: FormData) => {
     }
 
     if (avatarFile) {
-      const { data: uploadedAvatarFilePath, error: uploadAvatarFileError } =
+      const { data: uploadedAvatarFile, error: uploadAvatarFileError } =
         await supabase.storage
           .from("user-avatars")
           .upload(`${user.id}/avatar.png`, avatarFile, {
@@ -161,10 +161,16 @@ export const updateProfile = async (_: any, formData: FormData) => {
         throw uploadAvatarFileError.message;
       }
 
+      const uploadedAvatarFilePath = uploadedAvatarFile.path;
+
+      const { data: bucketData } = await supabase.storage
+        .from("user-avatars")
+        .getPublicUrl(uploadedAvatarFilePath);
+
       const { data: updateAvatarUrl, error: updateAvatarUrlError } =
         await supabase
           .from("profiles")
-          .update({ avatar_url: uploadedAvatarFilePath })
+          .update({ avatar_url: bucketData.publicUrl })
           .eq("id", user.id);
 
       if (updateAvatarUrlError) {
