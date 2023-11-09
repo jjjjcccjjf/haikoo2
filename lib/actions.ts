@@ -1,11 +1,12 @@
 "use server";
 
 import { GenericResponseType } from "@/types";
+import { Database } from "@/types/supabase";
 import { createServerActionClient } from "@supabase/auth-helpers-nextjs";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
-const supabase = createServerActionClient({ cookies });
+const supabase = createServerActionClient<Database>({ cookies });
 
 export async function signIn(formData: FormData) {
   const email = String(formData.get("email"));
@@ -191,12 +192,22 @@ export const updateProfile = async (_: any, formData: FormData) => {
   }
 };
 
-export async function resetPassword(formData: FormData) {
+export async function resetPassword(_: any, formData: FormData) {
   const email = String(formData.get("email"));
 
   try {
+    const { count, error: e } = await supabase
+      .from("user_emails")
+      .select("*", { count: "exact", head: true })
+      .eq("email", email);
+
+    if (!count) {
+      throw `${email} does not exist in our records.`;
+    }
+
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: "http://localhost:3000/auth/callback?next=http://localhost:3000/auth/forgot-password",
+      redirectTo:
+        "http://localhost:3000/auth/callback?next=http://localhost:3000/auth/forgot-password",
     });
 
     console.log(error);
@@ -206,7 +217,7 @@ export async function resetPassword(formData: FormData) {
     }
 
     return {
-      message: "OK",
+      message: `Please check ${email} for the reset password link.`,
       status: true,
     };
   } catch (error) {

@@ -36,6 +36,8 @@ import {
 import { useFormState, useFormStatus } from "react-dom";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Label } from "./ui/label";
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
+import { AlertCircle } from "lucide-react";
 
 export default function AuthCard({ user }: { user: UserWithProfile | null }) {
   return (
@@ -286,28 +288,60 @@ function LoginForm() {
           <SignUpButton />
         </div>
       </form>
-      <Accordion type="single" collapsible className="w-full">
-        <AccordionItem value="item-1" className="border-none">
-          <AccordionTrigger className="justify-center items-center text-sm font-normal text-muted-foreground">
-            Reset your password
-          </AccordionTrigger>
-          <AccordionContent className="p-1">
-            <form action={resetPassword} className="flex gap-2">
-              <Label htmlFor="email" className="sr-only">
-                Your email
-              </Label>
-              <Input
-                id="email"
-                name="email"
-                placeholder="example@email.com"
-                type="email"
-              />
-              <Button type="submit">Reset</Button>
-            </form>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+      <ResetPasswordForm />
     </>
+  );
+}
+
+function ResetPasswordForm() {
+  const [state, formAction] = useFormState(resetPassword, {
+    message: null,
+    status: null,
+  } as GenericResponseType);
+
+  return (
+    <>
+      <form action={formAction} className="">
+        <Accordion type="single" collapsible className="w-full mt-3">
+          <AccordionItem value="item-1" className="border-none">
+            <AccordionTrigger className="justify-center items-center text-sm font-normal text-muted-foreground">
+              Reset your password
+            </AccordionTrigger>
+            <AccordionContent className="p-1">
+              <div className="flex gap-2">
+                <Label htmlFor="email" className="sr-only">
+                  Your email
+                </Label>
+                <Input
+                  id="email"
+                  name="email"
+                  placeholder="example@email.com"
+                  type="email"
+                />
+                <ResetButton />
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </form>
+      {state.status !== null && (
+        <Alert variant={state.status === true ? "default" : "destructive"}>
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Heads up!</AlertTitle>
+          <AlertDescription>{state.message}</AlertDescription>
+        </Alert>
+      )}
+    </>
+  );
+}
+
+function ResetButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" disabled={pending} aria-disabled={pending}>
+      Reset
+    </Button>
   );
 }
 
