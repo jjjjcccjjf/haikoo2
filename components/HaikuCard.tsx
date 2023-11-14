@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useRef } from "react";
 import anonymouse from "@/app/anonymouse.png";
 import Image from "next/image";
-import { AiOutlineHeart } from "react-icons/ai";
 
 import { HaikuWithDetails } from "@/types";
 import { Skeleton } from "./ui/skeleton";
 import { cn } from "@/lib/utils";
+import { Like } from "./Like";
 
 export default function HaikuCard({
   contents,
@@ -48,14 +48,14 @@ export default function HaikuCard({
           </div>
         )}
         <div className="mt-4 flex items-center">
-          <button className="">
-            <AiOutlineHeart size={24} />
-          </button>
+          <Like haikuId={contents.id} />
         </div>
       </figure>
     </li>
   );
 }
+
+
 
 export function HaikuCardSkeleton({
   variant = "default",
