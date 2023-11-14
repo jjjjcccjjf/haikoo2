@@ -5,7 +5,7 @@ import Image from "next/image";
 import { HaikuWithDetails } from "@/types";
 import { Skeleton } from "./ui/skeleton";
 import { cn } from "@/lib/utils";
-import { Like } from "./Like";
+import { HaikuLikesButton } from "./HaikuLikesButton";
 
 export default function HaikuCard({
   contents,
@@ -21,6 +21,7 @@ export default function HaikuCard({
               src={contents?.profile?.avatar_url ?? anonymouse}
               alt=""
               fill={true}
+              sizes={"5vw"}
               className="object-cover"
               loading="lazy"
               decoding="async"
@@ -48,7 +49,7 @@ export default function HaikuCard({
           </div>
         )}
         <div className="mt-4 flex items-center">
-          <Like haikuId={contents.id} />
+          <HaikuLikesButton haikuId={contents.id} likesTotal={contents.likes_total ?? 0} />
         </div>
       </figure>
     </li>
