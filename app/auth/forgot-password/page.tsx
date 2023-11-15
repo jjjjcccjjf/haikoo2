@@ -25,7 +25,7 @@ export default function ForgotPassword() {
   const [newPass, setNewPass] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
 
-  console.log(params);
+  // console.log(params);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

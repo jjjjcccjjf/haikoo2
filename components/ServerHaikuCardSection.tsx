@@ -2,8 +2,9 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import HaikuCard from "./HaikuCard";
 import { TypographyP } from "./ui/typography";
+import { UserWithProfile } from "@/types";
 
-export default async function ServerHaikuCardSection() {
+export default async function ServerHaikuCardSection({user} : {user: UserWithProfile | null}) {
   const supabase = createServerComponentClient({ cookies });
 
   const { data, error } = await supabase
@@ -40,17 +41,17 @@ export default async function ServerHaikuCardSection() {
         <>
           <ul className="space-y-8">
             {haikuLists.list1.map((item) => {
-              return <HaikuCard contents={item} key={item.id} />;
+              return <HaikuCard contents={item} key={item.id} user={user} />;
             })}
           </ul>
           <ul className="space-y-8 ">
             {haikuLists.list2.map((item) => {
-              return <HaikuCard contents={item} key={item.id} />;
+              return <HaikuCard contents={item} key={item.id} user={user} />;
             })}
           </ul>
           <ul className="space-y-8 ">
             {haikuLists.list3.map((item) => {
-              return <HaikuCard contents={item} key={item.id} />;
+              return <HaikuCard contents={item} key={item.id} user={user} />;
             })}
           </ul>
         </>

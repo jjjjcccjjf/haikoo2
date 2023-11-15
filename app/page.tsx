@@ -54,7 +54,7 @@ export default async function Home() {
           <AuthCard user={userWithProfile}></AuthCard>
         </div>
       </section>
-      <ServerHaikuCardSection />
+      <ServerHaikuCardSection user={userWithProfile} />
     </>
   );
 }

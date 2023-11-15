@@ -2,15 +2,17 @@ import React, { useRef } from "react";
 import anonymouse from "@/app/anonymouse.png";
 import Image from "next/image";
 
-import { HaikuWithDetails } from "@/types";
+import { HaikuWithDetails, UserWithProfile } from "@/types";
 import { Skeleton } from "./ui/skeleton";
 import { cn } from "@/lib/utils";
 import { HaikuLikesButton } from "./HaikuLikesButton";
 
 export default function HaikuCard({
   contents,
+  user
 }: {
   contents: HaikuWithDetails;
+  user: UserWithProfile | null
 }) {
   return (
     <li className=" text-sm leading-6 ">
@@ -49,7 +51,7 @@ export default function HaikuCard({
           </div>
         )}
         <div className="mt-4 flex items-center">
-          <HaikuLikesButton haikuId={contents.id} likesTotal={contents.likes_total ?? 0} />
+          <HaikuLikesButton haikuId={contents.id} likesTotal={contents.likes_total ?? 0} user={user} />
         </div>
       </figure>
     </li>
