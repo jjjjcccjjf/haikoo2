@@ -41,7 +41,7 @@ import { AlertCircle } from "lucide-react";
 
 export default function AuthCard({ user }: { user: UserWithProfile | null }) {
   return (
-    <Card>
+    <Card className="h-104">
       <CardHeader>
         <CardTitle>{user ? "Welcome back" : "Welcome to Haikoo"}</CardTitle>
         {!user && (
@@ -288,7 +288,7 @@ function LoginForm() {
           <SignUpButton />
         </div>
       </form>
-      <ResetPasswordForm />
+      {/* <ResetPasswordForm /> */}
     </>
   );
 }

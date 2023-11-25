@@ -73,6 +73,10 @@ module.exports = {
       fontFamily: {
         sans: ["var(--font-rubik)"],
       },
+      height: {
+        104: "26rem",
+        120: "30rem",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

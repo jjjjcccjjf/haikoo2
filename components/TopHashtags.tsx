@@ -9,7 +9,7 @@ import Link from "next/link";
 
 export default function TopHashtags() {
   return (
-    <Card>
+    <Card className="h-104">
       <CardHeader>
         <CardTitle>Top Hashtags</CardTitle>
         <CardDescription className="truncate">
