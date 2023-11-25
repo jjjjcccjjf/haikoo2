@@ -39,6 +39,16 @@ import { Label } from "./ui/label";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { AlertCircle } from "lucide-react";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
 export default function AuthCard({ user }: { user: UserWithProfile | null }) {
   return (
     <Card className="h-104">
@@ -251,7 +261,7 @@ function LoginForm() {
             <FaFacebookSquare size={20}></FaFacebookSquare>
           </Button>
         </div>
-        <div className="relative">
+        {/* <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t"></span>
           </div>
@@ -260,7 +270,7 @@ function LoginForm() {
               Or continue with
             </span>
           </div>
-        </div>
+        </div> */}
         <label htmlFor="auth_email" className="sr-only">
           Email
         </label>
@@ -288,12 +298,69 @@ function LoginForm() {
           <SignUpButton />
         </div>
       </form>
-      {/* <ResetPasswordForm /> */}
+      <div className="flex items-center justify-center mt-3">
+        <ResetPasswordForm />
+      </div>
     </>
   );
 }
 
 function ResetPasswordForm() {
+  const [state, formAction] = useFormState(resetPassword, {
+    message: null,
+    status: null,
+  } as GenericResponseType);
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="link" className="font-normal text-muted-foreground">
+          Reset your password
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Reset your password</DialogTitle>
+          <DialogDescription>
+            A magic link will be sent to automagically log you in. You can then
+            change your password afterwards.
+          </DialogDescription>
+        </DialogHeader>
+        <form action={formAction}>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="email" className="text-right">
+                Your Email
+              </Label>
+              <Input
+                id="email"
+                placeholder="you@example.com"
+                type="email"
+                name="email"
+                required
+                className="col-span-3"
+              />
+            </div>
+            {state.status !== null && (
+              <Alert
+                variant={state.status === true ? "default" : "destructive"}
+              >
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Heads up!</AlertTitle>
+                <AlertDescription>{state.message}</AlertDescription>
+              </Alert>
+            )}
+          </div>
+          <DialogFooter>
+            <ResetButton></ResetButton>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function __ResetPasswordForm() {
   const [state, formAction] = useFormState(resetPassword, {
     message: null,
     status: null,
@@ -340,7 +407,7 @@ function ResetButton() {
 
   return (
     <Button type="submit" disabled={pending} aria-disabled={pending}>
-      Reset
+      Reset password
     </Button>
   );
 }
